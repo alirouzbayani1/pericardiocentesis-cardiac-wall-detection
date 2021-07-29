@@ -291,26 +291,6 @@ def run(model_path, image_path, output):
         cv2.imwrite(output, pred * 255)
 
 
-def hed(input_path, model_path, output_path=None):
-    pred_config = PredictConfig(
-        model=Model(),
-        session_init=SmartInit(model_path),
-        input_names=['image'],
-        output_names=['output' + str(k) for k in range(1, 7)])
-    predictor = OfflinePredictor(pred_config)
-    im = cv2.imread(input_path)
-    assert im is not None
-    im = cv2.resize(
-        im, (im.shape[1] // 16 * 16, im.shape[0] // 16 * 16)
-    )[None, :, :, :].astype('float32')
-    outputs = predictor(im)
-    pred = outputs[5][0] * 255
-    if output_path:
-        cv2.imwrite(output_path, pred)
-    else:
-        return pred
-
-
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
     parser.add_argument('--gpu', help='comma separated list of GPU(s) to use.')
